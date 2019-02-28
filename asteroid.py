@@ -62,14 +62,17 @@ class Asteroid(Drawn_Object):
     # Split the asteroid
     def split(self, asteroids):
 
-        asteroids.append(Asteroid())
-        asteroids.append(Asteroid())
+        # If the asteroid is on its last life it splits into 4 mini particles
+        splits = 2
+        if self.life == 1:
+            splits = 4
 
-        asteroids[-1].center = Vec2(self.center.x, self.center.y)
-        asteroids[-2].center = Vec2(self.center.x, self.center.y)
+        # Split the asteroid into multiple smaller ones
+        for split in range(splits):
+            asteroids.append(Asteroid())
+            asteroids[-1].center = Vec2(self.center.x, self.center.y)
+            asteroids[-1].life = self.life - 1
+            asteroids[-1].vertices = asteroids[-1].set_vertices()
 
-        asteroids[-1].life = self.life - 1
-        asteroids[-2].life = self.life - 1
-
-        asteroids[-1].vertices = asteroids[-1].set_vertices()
-        asteroids[-2].vertices = asteroids[-2].set_vertices()
+    def decrement_timer(self):
+        self.timer -= self.velocity.get_magnitude()

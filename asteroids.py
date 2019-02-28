@@ -6,7 +6,10 @@ from vec2 import *
 from mat2 import *
 from drawn_object import *
 
-
+# Due to the way Python deals with deleting objects (they get garbage collected
+# when all references are gone) I can't figure out how to delete the asteroids
+# or bullets from within their own class code, so it's done here. I know it
+# looks weird but that's why. If anyone can change this then awesome
 def main():
 
     # Get the turtle window
@@ -65,14 +68,14 @@ def main():
             del asteroids[i]
 
         # Move and draw all asteroids
-        for i in range(len(asteroids)):
+        for i in reversed(range(len(asteroids))):
+            # Decrement timer on remnants as needed
             if asteroids[i].life <= 0:
+                asteroids[i].decrement_timer()
                 if asteroids[i].timer <= 0:
+                    # If we delete a remnant do not try to move it after
                     del asteroids[i]
-                    del asteroids[i]
-                    break
-                else:
-                    asteroids[i].timer -= asteroids[i].velocity.get_magnitude()
+                    continue
             asteroids[i].move_object()
             asteroids[i].draw_object()
 
