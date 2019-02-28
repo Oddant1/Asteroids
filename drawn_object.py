@@ -123,14 +123,14 @@ class Drawn_Object:
         self.center += move
 
     # Check for collision with asteroids
-    def check_collision(self, asteroids):
+    def collision_testing(self, asteroids):
 
-        for asteroid in asteroids:
+        for i in range(len(asteroids)):
             for vertex in self.vertices:
-                if self._in_collision_distance(asteroid, vertex):
-                    if self._run_collision_test(asteroid):
-                        return True
-        return False
+                if self._in_collision_distance(asteroids[i], vertex):
+                    if self._run_collision_test(asteroids[i]):
+                        return [True, i]
+        return [False, 0]
 
     # Check if there is any possibility of collision
     def _in_collision_distance(self, asteroid, vertex):

@@ -48,17 +48,8 @@ class Bullet(Drawn_Object):
         self.vertices[0] += self.velocity
         self.vertices[1] += self.velocity
 
-        # Then check for collision with the extruded bullet
-        for i in range(len(asteroids)):
-            for vertex in self.vertices:
-                if self._in_collision_distance(asteroids[i], vertex):
-                    if self._run_collision_test(asteroids[i]):
-                        self.vertices[0] = temp_vertices[0]
-                        self.vertices[1] = temp_vertices[1]
-                        if asteroids[i].life > 0:
-                            return [True, i]
+        collision_data = self.collision_testing(asteroids)
 
-        # Restore the bullet to its actual state after checking collision
         self.vertices[0] = temp_vertices[0]
         self.vertices[1] = temp_vertices[1]
-        return [False, 0]
+        return collision_data

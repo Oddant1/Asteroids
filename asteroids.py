@@ -34,9 +34,6 @@ def main():
             player.move_object()
         # Draw the player for this frame
         player.draw_object()
-        # Check collision
-        if player.check_collision(asteroids):
-            respawn_player(player)
 
         # Keep track of bullets to be deleted
         to_delete = []
@@ -124,14 +121,6 @@ def get_input(player, bullets):
     if is_pressed(' '):
         if len(bullets) < 4:
             player.shoot(bullets)
-
-
-def respawn_player(player):
-
-    del player
-    player = Ship()
-    player.respawned = True
-
 
 main()
 win.exitonclick()
