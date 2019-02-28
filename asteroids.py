@@ -8,8 +8,8 @@ from drawn_object import *
 
 # Due to the way Python deals with deleting objects (they get garbage collected
 # when all references are gone) I can't figure out how to delete the asteroids
-# or bullets from within their own class code, so it's done here. I know it
-# looks weird but that's why. If anyone can change this then awesome
+# or bullets from within their own class code, so it's done here. I know it looks
+# weird but that's why. If anyone can change this then awesome
 def main():
 
     # Get the turtle window

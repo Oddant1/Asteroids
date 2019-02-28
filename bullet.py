@@ -20,15 +20,6 @@ class Bullet(Drawn_Object):
         # Draw the object
         Drawn_Object.__init__(self)
 
-    # Remove each piece of the object
-    def __del__(self):
-
-        del self.life
-        del self.parent
-        del self.velocity
-        del self.center
-        del self.vertices
-
     # Get the velocity of the bullet
     def _get_velocity(self):
         # Calculate in same manner as player velocity but make it faster

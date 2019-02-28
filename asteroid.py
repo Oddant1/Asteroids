@@ -13,9 +13,6 @@ class Asteroid(Drawn_Object):
         self.velocity = self.set_velocity()
         Drawn_Object.__init__(self)
 
-    def __del__(self):
-        del self
-
     # Find the center point of this asteroid
     def set_center(self):
 
