@@ -10,6 +10,7 @@ class Asteroid(Drawn_Object):
         self.center = self.set_center()
         self.vertices = self.set_vertices()
         self.velocity = self.set_velocity()
+        self.speed = self.velocity.get_magnitude()
         Drawn_Object.__init__(self)
 
     # Find the center point of this asteroid
@@ -85,7 +86,8 @@ class Fragment(Asteroid):
         self.center = Vec2(center.x, center.y)
         self.vertices = self.set_vertices()
         self.velocity = self.set_velocity()
+        self.speed = self.velocity.get_magnitude()
         Drawn_Object.__init__(self)
 
     def decrement_timer(self):
-        self.timer -= self.velocity.get_magnitude()
+        self.timer -= self.speed

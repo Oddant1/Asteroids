@@ -8,7 +8,7 @@ class Bullet(Drawn_Object):
 
     def __init__(self, player):
 
-        self.life = 500
+        self.timer = 500
         self.parent = player
         # Calculate velocity in same direction as player
         self.velocity = self._get_velocity()
@@ -53,3 +53,6 @@ class Bullet(Drawn_Object):
         self.vertices[0] = temp_vertices[0]
         self.vertices[1] = temp_vertices[1]
         return collision_data
+
+    def decrement_timer(self):
+        self.timer -= self.speed

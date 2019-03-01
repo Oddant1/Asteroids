@@ -130,7 +130,7 @@ class Drawn_Object:
                 if self._in_collision_distance(asteroids[i], vertex):
                     if self._run_collision_test(asteroids[i]):
                         return [True, i]
-        return [False, 0]
+        return [False, None]
 
     # Check if there is any possibility of collision
     def _in_collision_distance(self, asteroid, vertex):
