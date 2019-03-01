@@ -6,7 +6,10 @@ from vec2 import *
 from mat2 import *
 from drawn_object import *
 
-
+# Due to the way Python deals with deleting objects (they get garbage collected
+# when all references are gone) I can't figure out how to delete the asteroids
+# or bullets from within their own class code, so it's done here. I know it looks
+# weird but that's why. If anyone can change this then awesome
 def main():
 
     # Get the turtle window
@@ -14,7 +17,7 @@ def main():
     bgcolor('BLACK')
 
     # Create our player, bullet list, and asteroid list
-    player, bullets, asteroids = initialize()
+    player, bullets, asteroids, fragments = initialize()
 
     # Game loop
     while True:
@@ -31,9 +34,6 @@ def main():
             player.move_object()
         # Draw the player for this frame
         player.draw_object()
-        # Check collision
-        if player.check_collision(asteroids):
-            respawn_player(player)
 
         # Keep track of bullets to be deleted
         to_delete = []
@@ -60,21 +60,26 @@ def main():
         for i in reversed(to_delete):
             del bullets[i]
         # Split all asteroids in the list
-        for i in to_split:
-            asteroids[i].split(asteroids)
+        for i in reversed(to_split):
+            if asteroids[i].life <= 1:
+                fragments += asteroids[i].split(asteroids[i])
+            else:
+                asteroids[i].split(asteroids)
             del asteroids[i]
 
         # Move and draw all asteroids
-        for i in range(len(asteroids)):
-            if asteroids[i].life <= 0:
-                if asteroids[i].timer <= 0:
-                    del asteroids[i]
-                    del asteroids[i]
-                    break
-                else:
-                    asteroids[i].timer -= asteroids[i].velocity.get_magnitude()
+        for i in reversed(range(len(asteroids))):
             asteroids[i].move_object()
             asteroids[i].draw_object()
+
+        # Move and draw all fragmentsS
+        for i in reversed(range(len(fragments))):
+            fragments[i].timer -= fragments[i].velocity.get_magnitude()
+            if fragments[i].timer <= 0:
+                del fragments[i]
+                continue
+            fragments[i].move_object()
+            fragments[i].draw_object()
 
         # Draw the new frame to the screen
         update()
@@ -93,14 +98,17 @@ def initialize():
     player = Ship()
     # Create a list to contain the bullets
     bullets = []
+    # Creates a list to contain asteroid fragments
+    fragments = []
 
     # Create the initial four asteroids
     asteroids = []
     for i in range(4):
         asteroids.append(Asteroid())
 
-    # Return a list of the player the bullet list and the asteroid list
-    return [player, bullets, asteroids]
+    # Return a list of the player the bullet list, the asteroid list, and the
+    # fragment list
+    return [player, bullets, asteroids, fragments]
 
 
 # Get user input
@@ -121,14 +129,6 @@ def get_input(player, bullets):
     if is_pressed(' '):
         if len(bullets) < 4:
             player.shoot(bullets)
-
-
-def respawn_player(player):
-
-    del player
-    player = Ship()
-    player.respawned = True
-
 
 main()
 win.exitonclick()

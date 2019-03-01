@@ -17,9 +17,6 @@ class Ship(Drawn_Object):
     def __init__(self):
         Drawn_Object.__init__(self)
 
-    def __del__(self):
-        del self
-
     # Add velocity to the ship
     def accelerate_ship(self):
 
