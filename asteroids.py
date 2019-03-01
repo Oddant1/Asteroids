@@ -17,7 +17,7 @@ def main():
     bgcolor('BLACK')
 
     # Create our player, bullet list, and asteroid list
-    player, bullets, asteroids = initialize()
+    player, bullets, asteroids, fragments = initialize()
 
     # Game loop
     while True:
@@ -60,21 +60,26 @@ def main():
         for i in reversed(to_delete):
             del bullets[i]
         # Split all asteroids in the list
-        for i in to_split:
-            asteroids[i].split(asteroids)
+        for i in reversed(to_split):
+            if asteroids[i].life <= 1:
+                fragments += asteroids[i].split(asteroids[i])
+            else:
+                asteroids[i].split(asteroids)
             del asteroids[i]
 
         # Move and draw all asteroids
         for i in reversed(range(len(asteroids))):
-            # Decrement timer on remnants as needed
-            if asteroids[i].life <= 0:
-                asteroids[i].decrement_timer()
-                if asteroids[i].timer <= 0:
-                    # If we delete a remnant do not try to move it after
-                    del asteroids[i]
-                    continue
             asteroids[i].move_object()
             asteroids[i].draw_object()
+
+        # Move and draw all fragmentsS
+        for i in reversed(range(len(fragments))):
+            fragments[i].timer -= fragments[i].velocity.get_magnitude()
+            if fragments[i].timer <= 0:
+                del fragments[i]
+                continue
+            fragments[i].move_object()
+            fragments[i].draw_object()
 
         # Draw the new frame to the screen
         update()
@@ -93,14 +98,17 @@ def initialize():
     player = Ship()
     # Create a list to contain the bullets
     bullets = []
+    # Creates a list to contain asteroid fragments
+    fragments = []
 
     # Create the initial four asteroids
     asteroids = []
     for i in range(4):
         asteroids.append(Asteroid())
 
-    # Return a list of the player the bullet list and the asteroid list
-    return [player, bullets, asteroids]
+    # Return a list of the player the bullet list, the asteroid list, and the
+    # fragment list
+    return [player, bullets, asteroids, fragments]
 
 
 # Get user input

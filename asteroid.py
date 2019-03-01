@@ -3,11 +3,10 @@ from drawn_object import *
 
 class Asteroid(Drawn_Object):
 
-    def __init__(self):
+    def __init__(self, size=8, life=3):
 
-        self.timer = 50
-        self.size = 8
-        self.life = 3
+        self.size = size
+        self.life = life
         self.center = self.set_center()
         self.vertices = self.set_vertices()
         self.velocity = self.set_velocity()
@@ -53,23 +52,40 @@ class Asteroid(Drawn_Object):
 
         # Generate a random vector then clamp its magnitude to 4
         velocity = Vec2(randint(1, 100) * x_dir, randint(1, 100) * y_dir)
-        #return Vec2(0, 0)
         return velocity.set_magnitude(4, velocity.get_magnitude())
 
     # Split the asteroid
     def split(self, asteroids):
 
-        # If the asteroid is on its last life it splits into 4 mini particles
-        splits = 2
+        # If the asteroid is on its last life split into four fragments
         if self.life == 1:
-            splits = 4
+            fragments = []
+            for i in range(4):
+                fragments.append(Fragment(self.center))
+            return fragments
 
-        # Split the asteroid into multiple smaller ones
-        for split in range(splits):
+        # Split the asteroid into 2 smaller ones
+        # Just doing this twice not in a loop is probably a tiny micro-optimization
+        # since we know how many times it will run each time
+        for i in range(2):
             asteroids.append(Asteroid())
             asteroids[-1].center = Vec2(self.center.x, self.center.y)
             asteroids[-1].life = self.life - 1
             asteroids[-1].vertices = asteroids[-1].set_vertices()
+
+
+# This is placed in the same file as asteroid to avoid circular importing
+class Fragment(Asteroid):
+
+    def __init__(self, center):
+
+        self.timer = 50
+        self.size = 0
+        self.life = 0
+        self.center = Vec2(center.x, center.y)
+        self.vertices = self.set_vertices()
+        self.velocity = self.set_velocity()
+        Drawn_Object.__init__(self)
 
     def decrement_timer(self):
         self.timer -= self.velocity.get_magnitude()
