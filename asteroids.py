@@ -35,40 +35,32 @@ def main():
         # Draw the player for this frame
         player.draw_object()
 
-        # Keep track of bullets to be deleted
-        to_delete = []
-        # Keep track of asteroids to split
-        to_split = []
-
-        # Move and draw all bullets then check for collision with asteroids
-        for i in range(len(bullets)):
+        # Check for bullet collision with asteroids then move and draw bullets
+        for i in reversed(range(len(bullets))):
             # See if the bullet has traveled max distance
-            bullets[i].life -= bullets[i].speed
-            if bullets[i].life <= 0:
-                to_delete.append(i)
-            else:
-                # See if bullet collided with an asteroid
-                collision_info = bullets[i].check_collision(asteroids)
-                if collision_info[0]:
-                    to_delete.append(i)
-                    to_split.append(collision_info[1])
+            bullets[i].decrement_timer()
+            if bullets[i].timer <= 0:
+                del bullets[i]
+                continue
+            # See if bullet collided with an asteroid
+            collided, asteroid_index = bullets[i].check_collision(asteroids)
+            # Check for a collision
+            if collided:
+                # If the asteroid is dead make fragments
+                if asteroids[asteroid_index].life <= 1:
+                    fragments += asteroids[asteroid_index].split(asteroids)
+                # Otherwise split it normally
                 else:
-                    bullets[i].move_object()
-                    bullets[i].draw_object()
-
-        # Delete all marked bullets
-        for i in reversed(to_delete):
-            del bullets[i]
-        # Split all asteroids in the list
-        for i in reversed(to_split):
-            if asteroids[i].life <= 1:
-                fragments += asteroids[i].split(asteroids[i])
-            else:
-                asteroids[i].split(asteroids)
-            del asteroids[i]
+                    asteroids[asteroid_index].split(asteroids)
+                # Clean up our asteroid and bullet
+                del asteroids[asteroid_index]
+                del bullets[i]
+                continue
+            bullets[i].move_object()
+            bullets[i].draw_object()
 
         # Move and draw all asteroids
-        for i in reversed(range(len(asteroids))):
+        for i in range(len(asteroids)):
             asteroids[i].move_object()
             asteroids[i].draw_object()
 
