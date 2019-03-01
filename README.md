@@ -3,7 +3,7 @@ Asteroids in python3 turtle (Currently unfinished I will hopefully finish it som
 
 **NOTE**
 
-I have only ever run this on mint linux I don't know if there is anything here preventing it from working properly on any other platform
+I have only ever run this on Linux Mint I don't know if there is anything here preventing it from working properly on any other platform
 
 **Dependencies**
 
