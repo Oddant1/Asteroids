@@ -73,8 +73,6 @@ def main():
             fragments[i].move_object()
             fragments[i].draw_object()
 
-        if len(bullets) > 4:
-            print(len(bullets))
         # Draw the new frame to the screen
         update()
 
