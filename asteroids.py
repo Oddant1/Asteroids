@@ -12,7 +12,7 @@ from drawn_object import *
 # weird but that's why. If anyone can change this then awesome
 def main():
 
-    # Get the turtle window
+    # Initialize turtle parameters
     tracer(0)
     bgcolor('BLACK')
 
@@ -66,13 +66,15 @@ def main():
 
         # Move and draw all fragmentsS
         for i in reversed(range(len(fragments))):
-            fragments[i].timer -= fragments[i].velocity.get_magnitude()
+            fragments[i].decrement_timer()
             if fragments[i].timer <= 0:
                 del fragments[i]
                 continue
             fragments[i].move_object()
             fragments[i].draw_object()
 
+        if len(bullets) > 4:
+            print(len(bullets))
         # Draw the new frame to the screen
         update()
 
@@ -118,9 +120,15 @@ def get_input(player, bullets):
     elif is_pressed('a'):
         player.rotate_object('a')
     # Fire a bullet
-    if is_pressed(' '):
-        if len(bullets) < 4:
+    if player.shoot_counter == 0:
+        if is_pressed(' '):
             player.shoot(bullets)
+            player.shot_last_frame = True
+        else:
+            player.shot_last_frame = False
+    else:
+        player.shoot(bullets)
+
 
 main()
 win.exitonclick()
