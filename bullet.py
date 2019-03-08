@@ -37,22 +37,5 @@ class Bullet(Drawn_Object):
                 self.center + Vec2(1, -1),
                 self.center + Vec2(-1, -1)]
 
-    # Check for continuous collision
-    def check_collision(self, asteroids):
-
-        # Store current position for later
-        temp_vertices = [Vec2(self.vertices[0].x, self.vertices[0].y),
-                         Vec2(self.vertices[1].x, self.vertices[1].y)]
-
-        # Basically extrude the bullet to its location next frame
-        self.vertices[0] += self.velocity
-        self.vertices[1] += self.velocity
-
-        collision_data = self.collision_testing(asteroids)
-
-        self.vertices[0] = temp_vertices[0]
-        self.vertices[1] = temp_vertices[1]
-        return collision_data
-
     def decrement_timer(self):
         self.timer -= self.speed

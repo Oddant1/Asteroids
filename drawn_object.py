@@ -16,6 +16,7 @@ class Drawn_Object:
         self.vertex_distances = self._map(range(self.num_vertices), self._get_vertex_distances)
         self.vertex_distances.sort(key=lambda dist: dist[1], reverse=True)
 
+    # I just wrote this myself for the sake of it
     def _map(self, values, mapper):
 
         accumulator = []
@@ -122,28 +123,54 @@ class Drawn_Object:
         # Move the center as well
         self.center += move
 
-    # Check for collision with asteroids
-    def collision_testing(self, asteroids):
+    # Check for continuous collision
+    def continuous_collision_check(self, collidables, collidables_list=True):
 
-        for i in range(len(asteroids)):
-            for vertex in self.vertices:
-                if self._in_collision_distance(asteroids[i], vertex):
-                    if self._run_collision_test(asteroids[i]):
-                        return [True, i]
-        return [False, None]
+        # Store current position for later
+        temp_vertices = [Vec2(self.vertices[0].x, self.vertices[0].y),
+                         Vec2(self.vertices[1].x, self.vertices[1].y)]
+
+        # Basically extrude the bullet to its location next frame
+        self.vertices[0] += self.velocity
+        self.vertices[1] += self.velocity
+
+        collision_data = self.collision_testing(collidables)
+
+        self.vertices[0] = temp_vertices[0]
+        self.vertices[1] = temp_vertices[1]
+        return collision_data
+
+    # Check for collision with collidables
+    def collision_testing(self, collidables, collidables_list=True):
+
+        # If we are checking for collision with multiple objects
+        if collidables_list:
+            for i in range(len(collidables)):
+                for vertex in self.vertices:
+                    if self._in_collision_distance(collidables[i], vertex):
+                        if self._run_collision_test(collidables[i]):
+                            return [True, i]
+            return [False, None]
+
+        # If we were only passed a single object
+        for vertex in self.vertices:
+            if self._in_collision_distance(collidables, vertex):
+                if self._run_collision_test(collidables):
+                    return True
+        return False
 
     # Check if there is any possibility of collision
-    def _in_collision_distance(self, asteroid, vertex):
+    def _in_collision_distance(self, collidable, vertex):
 
-        # See if the collider vertex is closer to the asteroid center than the asteroid vertex
-        if (asteroid.center - vertex).get_magnitude() <= asteroid.vertex_distances[0][1]:
+        # See if the collider vertex is closer to the collidable center than the collidable vertex
+        if (collidable.center - vertex).get_magnitude() <= collidable.vertex_distances[0][1]:
             return True
         return False
 
-    def _run_collision_test(self, asteroid):
+    def _run_collision_test(self, collidable):
 
         # Get all the axes we need to check
-        axes = self.normal_vectors + asteroid.normal_vectors
+        axes = self.normal_vectors + collidable.normal_vectors
 
         # Loop through the axes
         for axis in axes:
@@ -158,10 +185,10 @@ class Drawn_Object:
                 elif s_dot > s_max:
                     s_max = s_dot
 
-            # Get the min and max asteroid projection on the axis
-            a_min = asteroid.vertices[0].dot_product(axis)
+            # Get the min and max collidable projection on the axis
+            a_min = collidable.vertices[0].dot_product(axis)
             a_max = a_min
-            for a_vertex in asteroid.vertices[1:]:
+            for a_vertex in collidable.vertices[1:]:
                 a_dot = a_vertex.dot_product(axis)
                 if a_dot < a_min:
                     a_min = a_dot

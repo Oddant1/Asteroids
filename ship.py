@@ -11,6 +11,9 @@ class Ship(Drawn_Object):
     center = Vec2(0, 0)
     vertices = [Vec2(-10, -15), Vec2(0, 15), Vec2(10, -15)]
     velocity = Vec2(0, 0)
+    lives = 3
+    respawning = False
+    respawn_counter = 0
     max_bullets = 4
     shot_last_frame = False
     frames_shot = 0
@@ -18,6 +21,17 @@ class Ship(Drawn_Object):
 
     def __init__(self):
         Drawn_Object.__init__(self)
+
+    # Draw the ship unless it is respawning
+    def draw_object(self):
+
+        # If the player is respawning only draw them every other frame
+        if not self.respawning or self.respawn_counter % 2 == 0:
+            Drawn_Object.draw_object(self)
+        if self.respawning:
+            self.respawn_counter -= 1
+            if self.respawn_counter == 0:
+                self.respawning = False
 
     # Add velocity to the ship
     def accelerate_ship(self):
@@ -55,3 +69,21 @@ class Ship(Drawn_Object):
             if len(bullets) < self.max_bullets:
                 bullets.append(Bullet(self))
                 self.frames_shot = 0
+
+    # Respawn the ship
+    def respawn(self):
+
+        # Remove a life and exit if out of lives
+        self.lives -= 1
+        #if self.lives == 0:
+           #exit()
+
+        # re-initialize ship variables
+        self.center = Vec2(0, 0)
+        self.vertices = [Vec2(-10, -15), Vec2(0, 15), Vec2(10, -15)]
+        self.velocity = Vec2(0, 0)
+        self.shot_last_frame = False
+        self.frames_shot = 0
+        self.queued_shots = 0
+        self.respawning = True
+        self.respawn_counter = 30

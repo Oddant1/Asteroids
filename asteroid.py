@@ -3,11 +3,14 @@ from drawn_object import *
 
 class Asteroid(Drawn_Object):
 
-    def __init__(self, size=8, life=3):
+    def __init__(self, size=8, life=3, center = None):
 
         self.size = size
         self.life = life
-        self.center = self.set_center()
+        if center != None:
+            self.center = center
+        else:
+            self.center = self.set_center()
         self.vertices = self.set_vertices()
         self.velocity = self.set_velocity()
         self.speed = self.velocity.get_magnitude()
@@ -66,14 +69,9 @@ class Asteroid(Drawn_Object):
             return fragments
 
         # Split the asteroid into 2 smaller ones
-        # Just doing this twice not in a loop is probably a tiny micro-optimization
-        # since we know how many times it will run each time
         for i in range(2):
-            asteroids.append(Asteroid())
-            asteroids[-1].center = Vec2(self.center.x, self.center.y)
-            asteroids[-1].life = self.life - 1
-            asteroids[-1].vertices = asteroids[-1].set_vertices()
-
+            asteroids.append(Asteroid(self.size - 1, self.life - 1,
+                             Vec2(self.center.x, self.center.y)))
 
 # This is placed in the same file as asteroid to avoid circular importing
 class Fragment(Asteroid):

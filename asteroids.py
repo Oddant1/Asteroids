@@ -43,7 +43,7 @@ def main():
                 del bullets[i]
                 continue
             # See if bullet collided with an asteroid
-            collided, asteroid_index = bullets[i].check_collision(asteroids)
+            collided, asteroid_index = bullets[i].continuous_collision_check(asteroids)
             # Check for a collision
             if collided:
                 # If the asteroid is dead make fragments
@@ -60,13 +60,28 @@ def main():
             bullets[i].draw_object()
 
         # Move and draw all asteroids
-        for i in range(len(asteroids)):
+        for i in reversed(range(len(asteroids))):
+
+            # Move the asteroids
             asteroids[i].move_object()
+            # If the player isn't respawning check collision
+            if not player.respawning:
+                if asteroids[i].collision_testing(player, False):
+                    # Kill the player and split the asteroid they hit
+                    player.respawn()
+                    if asteroids[i].life <= 1:
+                        fragments += asteroids[i].split(asteroids)
+                    else:
+                        asteroids[i].split(asteroids)
+                    del asteroids[i]
+                    continue
+            # Draw the asteroid if it wasn't hit
             asteroids[i].draw_object()
 
         # Move and draw all fragmentsS
         for i in reversed(range(len(fragments))):
             fragments[i].decrement_timer()
+            # Kill fragments if they run out of time
             if fragments[i].timer <= 0:
                 del fragments[i]
                 continue
