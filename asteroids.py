@@ -118,7 +118,7 @@ def get_input(player, bullets):
     elif is_pressed('a'):
         player.rotate_object('a')
     # Fire a bullet
-    if player.shoot_counter == 0:
+    if player.queued_shots == 0:
         if is_pressed(' '):
             player.shoot(bullets)
             player.shot_last_frame = True
