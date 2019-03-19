@@ -32,8 +32,7 @@ class Drawn_Object:
             next_i = 0
             temp = self.vertices[next_i] - self.vertices[i]
         temp = self.vertices[next_i] - self.vertices[i]
-        # Make a get_normal method in Vec2
-        return Vec2(-temp.y, temp.x)
+        return temp.get_normal()
 
     # Get distance from center to each vertex to be used to determing if collision
     # needs to be checked
@@ -52,6 +51,7 @@ class Drawn_Object:
 
     # Draw a line between two vertices
     def draw_line(self, start, end):
+
         self.drawer.penup()
         self.drawer.goto(start.x, start.y)
         self.drawer.pendown()
@@ -71,14 +71,14 @@ class Drawn_Object:
         # If all the vertices are off the screen move the object
         if vertices_out == self.num_vertices:
             if self.center.x < 0:
-                self.move_to_opposite('x', 1)
+                self._move_to_opposite('x', 1)
             else:
-                self.move_to_opposite('x', -1)
+                self._move_to_opposite('x', -1)
         elif vertices_out == -self.num_vertices:
             if self.center.y < 0:
-                self.move_to_opposite('y', 1)
+                self._move_to_opposite('y', 1)
             else:
-                self.move_to_opposite('y', -1)
+                self._move_to_opposite('y', -1)
 
     def rotate_object(self, dir):
 
@@ -107,7 +107,7 @@ class Drawn_Object:
         return 0
 
     # Move the object to the other side of the screen if it has clipped
-    def move_to_opposite(self, axis, direction):
+    def _move_to_opposite(self, axis, direction):
 
         # If it clipped off the x axis flip it there
         if axis == 'x':
@@ -175,29 +175,31 @@ class Drawn_Object:
         # Loop through the axes
         for axis in axes:
 
-            # Get the min and max ship projection on the axis
-            s_min = self.vertices[0].dot_product(axis)
-            s_max = s_min
-            for s_vertex in self.vertices[1:]:
-                s_dot = s_vertex.dot_product(axis)
-                if s_dot < s_min:
-                    s_min = s_dot
-                elif s_dot > s_max:
-                    s_max = s_dot
-
-            # Get the min and max collidable projection on the axis
-            a_min = collidable.vertices[0].dot_product(axis)
-            a_max = a_min
-            for a_vertex in collidable.vertices[1:]:
-                a_dot = a_vertex.dot_product(axis)
-                if a_dot < a_min:
-                    a_min = a_dot
-                elif a_dot > a_max:
-                    a_max = a_dot
+            # Get the min and max projections on the axis
+            s_min, s_max = self._get_projections(axis)
+            c_min, c_max = collidable._get_projections(axis)
 
             # If the projections do not overlap return False
-            if (s_min < a_min and s_max < a_min) or (s_max > a_max and s_min > a_max):
+            if (s_min < c_min and s_max < c_min) or (s_max > c_max and s_min > c_max):
                 return False
 
         # Return True if no non overlapping axis was found
         return True
+
+
+    def _get_projections(self, axis):
+
+        # Get placeholders for projections
+        min_proj = self.vertices[0].dot_product(axis)
+        max_proj = min_proj
+
+        # Loop through all vertices finding min and max projections along axis
+        for vertex in self.vertices[1:]:
+            dot = vertex.dot_product(axis)
+            if dot < min_proj:
+                min_proj = dot
+            elif dot > max_proj:
+                max_proj = dot
+
+        # Return projections
+        return min_proj, max_proj

@@ -76,3 +76,6 @@ class Vec2():
 
     def dot_product(self, other):
         return self.x * other.x + self.y * other.y
+
+    def get_normal(self):
+        return Vec2(-self.y, self.x)

@@ -6,10 +6,6 @@ from vec2 import *
 from mat2 import *
 from drawn_object import *
 
-# Due to the way Python deals with deleting objects (they get garbage collected
-# when all references are gone) I can't figure out how to delete the asteroids
-# or bullets from within their own class code, so it's done here. I know it looks
-# weird but that's why. If anyone can change this then awesome
 def main():
 
     # Initialize turtle parameters
@@ -61,7 +57,6 @@ def main():
 
         # Move and draw all asteroids
         for i in reversed(range(len(asteroids))):
-
             # Move the asteroids
             asteroids[i].move_object()
             # If the player isn't respawning check collision
