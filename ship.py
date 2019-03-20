@@ -18,6 +18,7 @@ class Ship(Drawn_Object):
     shot_last_frame = False
     frames_shot = 0
     queued_shots = 0
+    score = 1234567890
 
     def __init__(self):
         Drawn_Object.__init__(self)
@@ -62,6 +63,8 @@ class Ship(Drawn_Object):
         # If space was pressed last frame increment the counter
         elif self.shot_last_frame:
             # This is % 25 because that's how many frames the bullets are alive
+            # This should not be hard coded, but for now it will be until I clean
+            # up the code and come up with a better way of making it not like this
             if self.frames_shot > 0 and self.frames_shot % 25 == 0:
                 self.queued_shots = self.max_bullets
         # If space was not held last frame the fire

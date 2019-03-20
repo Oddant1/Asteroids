@@ -59,14 +59,11 @@ class Asteroid(Drawn_Object):
         return velocity.set_magnitude(4, velocity.get_magnitude())
 
     # Split the asteroid
-    def split(self, asteroids):
+    def split(self, asteroids, fragments):
 
-        # If the asteroid is on its last life split into four fragments
-        if self.life == 1:
-            fragments = []
-            for i in range(4):
-                fragments.append(Fragment(self.center))
-            return fragments
+        # Produce fragments from the asteroid
+        for i in range(4):
+            fragments.append(Fragment(self.center))
 
         # Split the asteroid into 2 smaller ones
         for i in range(2):

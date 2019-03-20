@@ -42,12 +42,8 @@ def main():
             collided, asteroid_index = bullets[i].continuous_collision_check(asteroids)
             # Check for a collision
             if collided:
-                # If the asteroid is dead make fragments
-                if asteroids[asteroid_index].life <= 1:
-                    fragments += asteroids[asteroid_index].split(asteroids)
-                # Otherwise split it normally
-                else:
-                    asteroids[asteroid_index].split(asteroids)
+                # Split the asteroid
+                asteroids[asteroid_index].split(asteroids, fragments)
                 # Clean up our asteroid and bullet
                 del asteroids[asteroid_index]
                 del bullets[i]
@@ -64,10 +60,7 @@ def main():
                 if asteroids[i].collision_testing(player, False):
                     # Kill the player and split the asteroid they hit
                     player.respawn()
-                    if asteroids[i].life <= 1:
-                        fragments += asteroids[i].split(asteroids)
-                    else:
-                        asteroids[i].split(asteroids)
+                    asteroids[i].split(asteroids, fragments)
                     del asteroids[i]
                     continue
             # Draw the asteroid if it wasn't hit
@@ -108,8 +101,7 @@ def initialize():
     for i in range(4):
         asteroids.append(Asteroid())
 
-    # Return a list of the player the bullet list, the asteroid list, and the
-    # fragment list
+    # Return a list of the player the bullet list, the asteroid list, and the fragment list
     return [player, bullets, asteroids, fragments]
 
 
