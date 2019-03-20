@@ -34,21 +34,6 @@ class Ship(Drawn_Object):
             if self.respawn_counter == 0:
                 self.respawning = False
 
-    # Add velocity to the ship
-    def accelerate_ship(self):
-
-        self.velocity += ((self.vertices[1] - self.center) * 2) * frame
-        self.velocity.clamp_magnitude(8)
-
-    # Remove velocity from the ship
-    def decelerate_ship(self):
-
-        current_speed = self.velocity.get_magnitude()
-        if 0 <= current_speed <= (4 * frame):
-            self.velocity = Vec2(0, 0)
-        else:
-            self.velocity.clamp_magnitude(current_speed - (4 * frame))
-
     # Fire a bullet
     def shoot(self, bullets):
 
@@ -74,10 +59,11 @@ class Ship(Drawn_Object):
                 self.frames_shot = 0
 
     # Respawn the ship
-    def respawn(self):
+    def respawn(self, hud):
 
         # Remove a life and exit if out of lives
         self.lives -= 1
+        hud.remove_life()
         #if self.lives == 0:
            #exit()
 
@@ -90,3 +76,31 @@ class Ship(Drawn_Object):
         self.queued_shots = 0
         self.respawning = True
         self.respawn_counter = 30
+
+# This is in ship.py to prevent circular imports
+class HUD(Drawn_Object):
+
+    def __init__(self, player):
+
+        # Get the player info for the HUD
+        self.parent = player
+        self.score = []
+        self.lives = []
+
+        # Set up the lives to be drawn
+        for i in range(self.parent.lives):
+            self. lives.append([Vec2(-width + 10 + (15 * i), height - 30),
+                                Vec2(-width + 15 + (15 * i), height - 15),
+                                Vec2(-width + 20 + (15 * i), height - 30)])
+
+    # Draw the HUD
+    def draw_object(self):
+
+        for i in range(len(self.lives)):
+            for j in range(len(self.lives[i]) -1):
+                self.draw_line(self.lives[i][j], self.lives[i][j + 1])
+            self.draw_line(self.lives[i][-1], self.lives[i][0])
+
+    # Remove a life from the HUD
+    def remove_life(self):
+        self.lives = self.lives[:-1]

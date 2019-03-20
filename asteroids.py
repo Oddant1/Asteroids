@@ -13,7 +13,7 @@ def main():
     bgcolor('BLACK')
 
     # Create our player, bullet list, and asteroid list
-    player, bullets, asteroids, fragments = initialize()
+    player, bullets, asteroids, fragments, hud = initialize()
 
     # Game loop
     while True:
@@ -30,6 +30,7 @@ def main():
             player.move_object()
         # Draw the player for this frame
         player.draw_object()
+        hud.draw_object()
 
         # Check for bullet collision with asteroids then move and draw bullets
         for i in reversed(range(len(bullets))):
@@ -59,7 +60,7 @@ def main():
             if not player.respawning:
                 if asteroids[i].collision_testing(player, False):
                     # Kill the player and split the asteroid they hit
-                    player.respawn()
+                    player.respawn(hud)
                     asteroids[i].split(asteroids, fragments)
                     del asteroids[i]
                     continue
@@ -91,18 +92,19 @@ def initialize():
 
     # Create the player's ship
     player = Ship()
+    # Create the initial hud
+    hud = HUD(player)
     # Create a list to contain the bullets
     bullets = []
     # Creates a list to contain asteroid fragments
     fragments = []
-
     # Create the initial four asteroids
     asteroids = []
     for i in range(4):
         asteroids.append(Asteroid())
 
     # Return a list of the player the bullet list, the asteroid list, and the fragment list
-    return [player, bullets, asteroids, fragments]
+    return player, bullets, asteroids, fragments, hud
 
 
 # Get user input
@@ -110,9 +112,9 @@ def get_input(player, bullets):
 
     # Move the ship forward
     if is_pressed('w'):
-        player.accelerate_ship()
+        player.accelerate_object()
     elif player.velocity.get_magnitude() > 0:
-        player.decelerate_ship()
+        player.decelerate_object()
     # Rotate the ship right
     if is_pressed('d'):
         player.rotate_object('d')

@@ -66,9 +66,10 @@ class Asteroid(Drawn_Object):
             fragments.append(Fragment(self.center))
 
         # Split the asteroid into 2 smaller ones
-        for i in range(2):
-            asteroids.append(Asteroid(self.size - 1, self.life - 1,
-                             Vec2(self.center.x, self.center.y)))
+        if self.life > 1:
+            for i in range(2):
+                asteroids.append(Asteroid(self.size - 1, self.life - 1,
+                                 Vec2(self.center.x, self.center.y)))
 
 # This is placed in the same file as asteroid to avoid circular importing
 class Fragment(Asteroid):
@@ -82,7 +83,7 @@ class Fragment(Asteroid):
         self.vertices = self.set_vertices()
         self.velocity = self.set_velocity()
         self.speed = self.velocity.get_magnitude()
-        Drawn_Object.__init__(self)
+        Drawn_Object.__init__(self, False)
 
     def decrement_timer(self):
         self.timer -= self.speed

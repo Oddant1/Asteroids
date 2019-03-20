@@ -9,12 +9,13 @@ class Drawn_Object:
     drawer.pencolor('WHITE')
 
     # Initialize the object
-    def __init__(self):
+    def __init__(self, collidable = True):
 
         self.num_vertices = len(self.vertices)
-        self.normal_vectors = self._map(range(self.num_vertices), self._get_normal_vectors)
-        self.vertex_distances = self._map(range(self.num_vertices), self._get_vertex_distances)
-        self.vertex_distances.sort(key=lambda dist: dist[1], reverse=True)
+        if collidable:
+            self.normal_vectors = self._map(range(self.num_vertices), self._get_normal_vectors)
+            self.vertex_distances = self._map(range(self.num_vertices), self._get_vertex_distances)
+            self.vertex_distances.sort(key=lambda dist: dist[1], reverse=True)
 
     # I just wrote this myself for the sake of it
     def _map(self, values, mapper):
@@ -47,7 +48,6 @@ class Drawn_Object:
 
         # Draw the last edge
         self.draw_line(self.vertices[-1], self.vertices[0])
-        self.normal_vectors = self._map(range(self.num_vertices), self._get_normal_vectors)
 
     # Draw a line between two vertices
     def draw_line(self, start, end):
@@ -95,6 +95,25 @@ class Drawn_Object:
             vertex -= self.center
             vertex *= rot_matrix
             vertex += self.center
+
+        # If the object rotated its normals must be recalculated
+        self.normal_vectors = self._map(range(self.num_vertices),
+                                        self._get_normal_vectors)
+
+    # Add velocity to the object
+    def accelerate_object(self):
+
+        self.velocity += ((self.vertices[1] - self.center) * 2) * frame
+        self.velocity.clamp_magnitude(8)
+
+    # Remove velocity from the object
+    def decelerate_object(self):
+
+        current_speed = self.velocity.get_magnitude()
+        if 0 <= current_speed <= (4 * frame):
+            self.velocity = Vec2(0, 0)
+        else:
+            self.velocity.clamp_magnitude(current_speed - (4 * frame))
 
     # Check if the vertex has gone off the screen
     def check_edge(self, vertex):
