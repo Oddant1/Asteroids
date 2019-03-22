@@ -40,14 +40,16 @@ class Drawn_Object:
     def _get_vertex_distances(self, i):
         return (i, (self.center - self.vertices[i]).get_magnitude())
 
-    def draw_object(self):
+    # Draws the object
+    def draw_object(self, enclosed=True):
 
         # Draw all edges aside from the last
         for i in range(self.num_vertices - 1):
             self.draw_line(self.vertices[i], self.vertices[i + 1])
 
-        # Draw the last edge
-        self.draw_line(self.vertices[-1], self.vertices[0])
+        # Draw the closing edge if needed
+        if enclosed:
+            self.draw_line(self.vertices[-1], self.vertices[0])
 
     # Draw a line between two vertices
     def draw_line(self, start, end):
@@ -135,7 +137,7 @@ class Drawn_Object:
         else:
             move = Vec2(0, (height * 2 + 30) * direction)
 
-        # Add the flipping vector the vertices
+        # Add the flipping vector to the vertices
         for vertex in self.vertices:
             vertex += move
 

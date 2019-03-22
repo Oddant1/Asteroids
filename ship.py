@@ -18,7 +18,7 @@ class Ship(Drawn_Object):
     shot_last_frame = False
     frames_shot = 0
     queued_shots = 0
-    score = 1234567890
+    score = 0
 
     def __init__(self):
         Drawn_Object.__init__(self)
@@ -58,6 +58,12 @@ class Ship(Drawn_Object):
                 bullets.append(Bullet(self))
                 self.frames_shot = 0
 
+    # Increase the score by the appropriate amount
+    def increase_score(self, points, hud):
+
+        self.score += points
+        hud.set_score()
+
     # Respawn the ship
     def respawn(self, hud):
 
@@ -80,27 +86,101 @@ class Ship(Drawn_Object):
 # This is in ship.py to prevent circular imports
 class HUD(Drawn_Object):
 
+    digits = [[[-width + 10, height - 10],
+               [-width + 20, height - 10],
+               [-width + 20, height - 30],
+               [-width + 10, height - 30],
+               [-width + 10, height - 10]],
+              [[-width + 10, height - 10],
+               [-width + 15, height - 10],
+               [-width + 15, height - 30],
+               [-width + 10, height - 30],
+               [-width + 20, height - 30]],
+              [[-width + 10, height - 10],
+               [-width + 20, height - 10],
+               [-width + 20, height - 20],
+               [-width + 10, height - 20],
+               [-width + 10, height - 30],
+               [-width + 20, height - 30]],
+              [[-width + 10, height - 10],
+               [-width + 20, height - 10],
+               [-width + 20, height - 20],
+               [-width + 10, height - 20],
+               [-width + 20, height - 20],
+               [-width + 20, height - 30],
+               [-width + 10, height - 30]],
+              [[-width + 10, height - 10],
+               [-width + 10, height - 20],
+               [-width + 20, height - 20],
+               [-width + 20, height - 10],
+               [-width + 20, height - 30]],
+              [[-width + 20, height - 10],
+               [-width + 10, height - 10],
+               [-width + 10, height - 20],
+               [-width + 20, height - 20],
+               [-width + 20, height - 30],
+               [-width + 10, height - 30]],
+              [[-width + 20, height - 10],
+               [-width + 10, height - 10],
+               [-width + 10, height - 30],
+               [-width + 20, height - 30],
+               [-width + 20, height - 20],
+               [-width + 10, height - 20]],
+              [[-width + 10, height - 10],
+               [-width + 20, height - 10],
+               [-width + 10, height - 30]],
+              [[-width + 10, height - 10],
+               [-width + 10, height - 30],
+               [-width + 20, height - 30],
+               [-width + 20, height - 10],
+               [-width + 10, height - 10],
+               [-width + 10, height - 20],
+               [-width + 20, height - 20]],
+              [[-width + 10, height - 30],
+               [-width + 20, height - 30],
+               [-width + 20, height - 10],
+               [-width + 10, height - 10],
+               [-width + 10, height - 20],
+               [-width + 20, height - 20]]]
+
+
     def __init__(self, player):
 
         # Get the player info for the HUD
         self.parent = player
-        self.score = []
-        self.lives = []
+        self.score_vertices = []
+        self.lives_vertices = []
+        self.set_score()
 
         # Set up the lives to be drawn
         for i in range(self.parent.lives):
-            self. lives.append([Vec2(-width + 10 + (15 * i), height - 30),
-                                Vec2(-width + 15 + (15 * i), height - 15),
-                                Vec2(-width + 20 + (15 * i), height - 30)])
+            self.lives_vertices.append([Vec2(-width + 10 + (15 * i), height - 60),
+                                        Vec2(-width + 15 + (15 * i), height - 40),
+                                        Vec2(-width + 20 + (15 * i), height - 60),
+                                        Vec2(-width + 10 + (15 * i), height - 60)])
 
     # Draw the HUD
     def draw_object(self):
 
-        for i in range(len(self.lives)):
-            for j in range(len(self.lives[i]) -1):
-                self.draw_line(self.lives[i][j], self.lives[i][j + 1])
-            self.draw_line(self.lives[i][-1], self.lives[i][0])
+        for element in self.lives_vertices + self.score_vertices:
+            for i in range(len(element) - 1):
+                self.draw_line(element[i], element[i + 1])
 
     # Remove a life from the HUD
     def remove_life(self):
-        self.lives = self.lives[:-1]
+        self.lives_vertices = self.lives_vertices[:-1]
+
+    # Turn the score digit into a list of digit vertices
+    def set_score(self):
+
+        # Extract the digits of the score
+        score_digits = extract_digits(self.parent.score)
+        self.score_vertices = []
+
+        # Loop through the digits
+        for i in range(len(score_digits)):
+            self.score_vertices.append([])
+            # Populate this sublist with the vertices for that number
+            for vertex in self.digits[score_digits[i]]:
+                # The + (15 * i) is to ensure the numbers are offset appropriately
+                self.score_vertices[i].append(Vec2(vertex[0] + (15 * i), vertex[1]))

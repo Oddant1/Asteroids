@@ -3,10 +3,16 @@ from drawn_object import *
 
 class Asteroid(Drawn_Object):
 
-    def __init__(self, size=8, life=3, center = None):
+    def __init__(self, size=8, life=3, center=None):
 
         self.size = size
         self.life = life
+        if self.life == 3:
+            self.points = 20
+        elif self.life == 2:
+            self.points = 50
+        else:
+            self.points = 100
         if center != None:
             self.center = center
         else:

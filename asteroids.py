@@ -43,6 +43,8 @@ def main():
             collided, asteroid_index = bullets[i].continuous_collision_check(asteroids)
             # Check for a collision
             if collided:
+                # Increase player score
+                player.increase_score(asteroids[asteroid_index].points, hud)
                 # Split the asteroid
                 asteroids[asteroid_index].split(asteroids, fragments)
                 # Clean up our asteroid and bullet
@@ -60,6 +62,7 @@ def main():
             if not player.respawning:
                 if asteroids[i].collision_testing(player, False):
                     # Kill the player and split the asteroid they hit
+                    player.increase_score(asteroids[i].points, hud)
                     player.respawn(hud)
                     asteroids[i].split(asteroids, fragments)
                     del asteroids[i]
