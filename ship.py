@@ -7,20 +7,20 @@ from mat2 import *
 # Class for the player ship
 class Ship(Drawn_Object):
 
-    # Set initial ship variables
-    center = Vec2(0, 0)
-    vertices = [Vec2(-10, -15), Vec2(0, 15), Vec2(10, -15)]
-    velocity = Vec2(0, 0)
-    lives = 3
-    respawning = False
-    respawn_counter = 0
-    max_bullets = 4
-    shot_last_frame = False
-    frames_shot = 0
-    queued_shots = 0
-    score = 0
-
     def __init__(self):
+
+        # Set initial ship variables
+        self.center = Vec2(0, 0)
+        self.vertices = [Vec2(-10, -15), Vec2(0, 15), Vec2(10, -15)]
+        self.velocity = Vec2(0, 0)
+        self.lives = 3
+        self.respawning = False
+        self.respawn_counter = 0
+        self.max_bullets = 4
+        self.shot_last_frame = False
+        self.frames_shot = 0
+        self.queued_shots = 0
+        self.score = 0
         Drawn_Object.__init__(self)
 
     # Draw the ship unless it is respawning
@@ -52,7 +52,7 @@ class Ship(Drawn_Object):
             # up the code and come up with a better way of making it not like this
             if self.frames_shot > 0 and self.frames_shot % 25 == 0:
                 self.queued_shots = self.max_bullets
-        # If space was not held last frame the fire
+        # If space was not held last frame then fire
         else:
             if len(bullets) < self.max_bullets:
                 bullets.append(Bullet(self))
