@@ -32,18 +32,14 @@ def main():
 
         # Get input from the player
         get_input(player, bullets)
-        # Move the player if they have velocity
-        if player.velocity.get_magnitude() > 0:
-            player.move_object()
-        # Draw the player and for this frame
-        player.draw_object()
-        hud.draw_object()
 
         # Move all relevant objects
-        move_bullets(player, bullets, asteroids, fragments, hud)
-        move_asteroids(asteroids, player, fragments, hud)
         move_fragments(fragments)
+        move_asteroids(asteroids)
+        move_bullets(player, bullets, asteroids, fragments, hud)
+        move_player(player, asteroids, fragments, hud)
 
+        hud.draw_object()
         # Draw the new frame to the screen
         update()
 
@@ -82,21 +78,12 @@ def move_bullets(player, bullets, asteroids, fragments, hud):
 
 
 # Move asteroids and check if any asteroids collided with the player
-def move_asteroids(asteroids, player, fragments, hud):
+def move_asteroids(asteroids):
 
         # Move and draw all asteroids
         for i in reversed(range(len(asteroids))):
             # Move the asteroids
             asteroids[i].move_object()
-            # If the player isn't respawning check collision
-            if not player.respawning:
-                if asteroids[i].collision_testing(player, False):
-                    # Kill the player and split the asteroid they hit
-                    player.increase_score(asteroids[i].points, hud)
-                    player.respawn(hud)
-                    asteroids[i].split(asteroids, fragments)
-                    del asteroids[i]
-                    continue
             # Draw the asteroid if it wasn't hit
             asteroids[i].draw_object()
 
@@ -113,6 +100,27 @@ def move_fragments(fragments):
                 continue
             fragments[i].move_object()
             fragments[i].draw_object()
+
+
+def move_player(player, asteroids, fragments, hud):
+
+    # Move the player
+    if player.velocity.get_magnitude() > 0:
+        player.move_object()
+    # If the player isn't respawning check collision
+    if not player.respawning:
+        # See if bullet collided with an asteroid
+        collided, asteroid_index = player.continuous_collision_check(asteroids)
+        # Check for a collision
+        if collided:
+            # Increase player score
+            player.increase_score(asteroids[asteroid_index].points, hud)
+            # Split the asteroid
+            asteroids[asteroid_index].split(asteroids, fragments)
+            # Clean up our asteroid and respawn player
+            del asteroids[asteroid_index]
+            player.respawn(hud)
+    player.draw_object()
 
 
 # Get user input
