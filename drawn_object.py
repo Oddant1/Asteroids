@@ -35,7 +35,7 @@ class Drawn_Object:
         temp = self.vertices[next_i] - self.vertices[i]
         return temp.get_normal()
 
-    # Get distance from center to each vertex to be used to determing if collision
+    # Get distance from center to each vertex to be used to determine if collision
     # needs to be checked
     def _get_vertex_distances(self, i):
         return (i, (self.center - self.vertices[i]).get_magnitude())
@@ -206,7 +206,6 @@ class Drawn_Object:
 
         # Return True if no non overlapping axis was found
         return True
-
 
     def _get_projections(self, axis):
 

@@ -12,11 +12,18 @@ def main():
     tracer(0)
     bgcolor('BLACK')
 
+    # Initial asteroid count
+    asteroid_count = 4;
     # Create our player, bullet list, and asteroid list
-    player, bullets, asteroids, fragments, hud = initialize()
+    player, bullets, asteroids, fragments, hud = initialize(asteroid_count)
 
     # Game loop
     while True:
+
+        # Create more asteroids if the player killed all previous asteroids
+        if len(asteroids) == 0:
+            asteroid_count += 1
+            asteroids = create_asteroids(asteroid_count, player.center)
 
         # Get the time at the start of this frame
         start_time = clock()
@@ -28,9 +35,28 @@ def main():
         # Move the player if they have velocity
         if player.velocity.get_magnitude() > 0:
             player.move_object()
-        # Draw the player for this frame
+        # Draw the player and for this frame
         player.draw_object()
         hud.draw_object()
+
+        # Move all relevant objects
+        move_bullets(player, bullets, asteroids, fragments, hud)
+        move_asteroids(asteroids, player, fragments, hud)
+        move_fragments(fragments)
+
+        # Draw the new frame to the screen
+        update()
+
+        # Keep the frames
+        elapsed_time = clock()
+        if (frame - (elapsed_time - start_time)) > 0:
+            sleep(frame - (elapsed_time - start_time))
+        else:
+            print(frame - (elapsed_time - start_time))
+
+
+# Moves all bullets and checks if they have collided with any asteroids
+def move_bullets(player, bullets, asteroids, fragments, hud):
 
         # Check for bullet collision with asteroids then move and draw bullets
         for i in reversed(range(len(bullets))):
@@ -54,6 +80,10 @@ def main():
             bullets[i].move_object()
             bullets[i].draw_object()
 
+
+# Move asteroids and check if any asteroids collided with the player
+def move_asteroids(asteroids, player, fragments, hud):
+
         # Move and draw all asteroids
         for i in reversed(range(len(asteroids))):
             # Move the asteroids
@@ -70,6 +100,10 @@ def main():
             # Draw the asteroid if it wasn't hit
             asteroids[i].draw_object()
 
+
+# Moves all fragments and despawns them if needed
+def move_fragments(fragments):
+
         # Move and draw all fragmentsS
         for i in reversed(range(len(fragments))):
             fragments[i].decrement_timer()
@@ -79,35 +113,6 @@ def main():
                 continue
             fragments[i].move_object()
             fragments[i].draw_object()
-
-        # Draw the new frame to the screen
-        update()
-
-        # Keep the frames
-        elapsed_time = clock()
-        if (frame - (elapsed_time - start_time)) > 0:
-            sleep(frame - (elapsed_time - start_time))
-        else:
-            print(frame - (elapsed_time - start_time))
-
-
-def initialize():
-
-    # Create the player's ship
-    player = Ship()
-    # Create the initial hud
-    hud = HUD(player)
-    # Create a list to contain the bullets
-    bullets = []
-    # Creates a list to contain asteroid fragments
-    fragments = []
-    # Create the initial four asteroids
-    asteroids = []
-    for i in range(4):
-        asteroids.append(Asteroid())
-
-    # Return a list of the player the bullet list, the asteroid list, and the fragment list
-    return player, bullets, asteroids, fragments, hud
 
 
 # Get user input
@@ -133,6 +138,29 @@ def get_input(player, bullets):
             player.shot_last_frame = False
     else:
         player.shoot(bullets)
+
+
+# Create necessary intial objects
+def initialize(asteroid_count):
+
+    # Create the player's ship
+    player = Ship()
+    # Create the initial hud
+    hud = HUD(player)
+    # Create a list to contain the bullets
+    bullets = []
+    # Creates a list to contain asteroid fragments
+    fragments = []
+    # Create the initial four asteroids
+    asteroids = create_asteroids(asteroid_count, player.center)
+
+    # Return the player, the bullet list, the asteroid list, the fragment list, and the hud
+    return player, bullets, asteroids, fragments, hud
+
+
+# Fill the asteroid list
+def create_asteroids(asteroid_count, player_center):
+    return [Asteroid(player_center=player_center) for i in range(asteroid_count)]
 
 
 main()
