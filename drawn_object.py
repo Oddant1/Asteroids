@@ -145,7 +145,7 @@ class Drawn_Object:
         self.center += move
 
     # Check for continuous collision
-    def continuous_collision_check(self, collidables, collidables_list=True):
+    def continuous_collision_check(self, collidables):
 
         # Store current position for later
         temp_vertices = [Vec2(self.vertices[0].x, self.vertices[0].y),
@@ -162,23 +162,17 @@ class Drawn_Object:
         return collision_data
 
     # Check for collision with collidables
-    def collision_testing(self, collidables, collidables_list=True):
+    def collision_testing(self, collidables):
 
-        # If we are checking for collision with multiple objects
-        if collidables_list:
-            for i in range(len(collidables)):
-                for vertex in self.vertices:
-                    if self._in_collision_distance(collidables[i], vertex):
-                        if self._run_collision_test(collidables[i]):
-                            return [True, i]
-            return [False, None]
-
-        # If we were only passed a single object
-        for vertex in self.vertices:
-            if self._in_collision_distance(collidables, vertex):
-                if self._run_collision_test(collidables):
-                    return True
-        return False
+        # Loop through all possible collidables
+        for i in range(len(collidables)):
+            # Loop through all of this object's vertices
+            for vertex in self.vertices:
+                # If they are close enough they may be colliding check for collision
+                if self._in_collision_distance(collidables[i], vertex):
+                    if self._run_collision_test(collidables[i]):
+                        return [True, i]
+        return [False, None]
 
     # Check if there is any possibility of collision
     def _in_collision_distance(self, collidable, vertex):
