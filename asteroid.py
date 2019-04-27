@@ -3,43 +3,27 @@ from drawn_object import *
 
 class Asteroid(Drawn_Object):
 
-    def __init__(self, size=8, life=3, center=None):
+    def __init__(self, size=8, life=3, center=None, player_center=None):
 
         self.size = size
         self.life = life
-        if self.life == 3:
-            self.points = 20
-        elif self.life == 2:
-            self.points = 50
-        else:
-            self.points = 100
-        if center != None:
-            self.center = center
-        else:
-            self.center = self.set_center()
+        self.points = (0, 100, 50, 20)[self.life]
+        self.center = center if center else self.set_center(player_center)
         self.vertices = self.set_vertices()
         self.velocity = self.set_velocity()
         self.speed = self.velocity.get_magnitude()
         Drawn_Object.__init__(self)
 
     # Find the center point of this asteroid
-    def set_center(self):
+    def set_center(self, player_center):
 
-        x = randint(0, 1)
-        y = randint(0, 1)
+        # Get the quadrant the asteroid will be in
+        x = (-1, 1)[randint(0, 1)]
+        y = (-1, 1)[randint(0, 1)]
 
-        if x == 0:
-            x = -1
-        else:
-            x = 1
-
-        if y == 0:
-            y = -1
-        else:
-            y = 1
-
-        # Get a random point at least 100 away from the origin on both axes
-        return Vec2(x * randint(100, int(width)), y * randint(100, int(height)))
+        # Get a random point at least 100 away from the player on both axes
+        return Vec2(x * uniform(player_center.x + 100, width),
+                    y * uniform(player_center.y + 100, height))
 
     # Set the vertices of this asteroid
     def set_vertices(self):
@@ -52,13 +36,9 @@ class Asteroid(Drawn_Object):
     # Set the velocity of this asteroid
     def set_velocity(self):
 
-        x_dir = randint(0, 1)
-        y_dir = randint(0, 1)
-
-        if x_dir == 0:
-            x_dir = -1
-        if y_dir == 0:
-            y_dir = -1
+        # Get the direction of the velocity
+        x_dir = (-1, 1)[randint(0, 1)]
+        y_dir = (-1, 1)[randint(0, 1)]
 
         # Generate a random vector then clamp its magnitude to 4
         velocity = Vec2(randint(1, 100) * x_dir, randint(1, 100) * y_dir)
