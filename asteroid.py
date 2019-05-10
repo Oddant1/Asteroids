@@ -7,11 +7,10 @@ class Asteroid(Drawn_Object):
 
         self.size = size
         self.life = life
-        self.points = (0, 100, 50, 20)[self.life]
+        self.points = (100, 50, 20)[self.life - 1]
         self.center = center if center else self.set_center(player_center)
         self.vertices = self.set_vertices()
         self.velocity = self.set_velocity()
-        self.speed = self.velocity.get_magnitude()
         Drawn_Object.__init__(self)
 
     # Find the center point of this asteroid

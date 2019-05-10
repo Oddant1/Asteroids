@@ -14,8 +14,6 @@ class Drawn_Object:
         self.num_vertices = len(self.vertices)
         if collidable:
             self.normal_vectors = self._map(range(self.num_vertices), self._get_normal_vectors)
-            self.vertex_distances = self._map(range(self.num_vertices), self._get_vertex_distances)
-            self.vertex_distances.sort(key=lambda dist: dist[1], reverse=True)
 
     # I just wrote this myself for the sake of it
     def _map(self, values, mapper):
@@ -34,11 +32,6 @@ class Drawn_Object:
             temp = self.vertices[next_i] - self.vertices[i]
         temp = self.vertices[next_i] - self.vertices[i]
         return temp.get_normal()
-
-    # Get distance from center to each vertex to be used to determine if collision
-    # needs to be checked
-    def _get_vertex_distances(self, i):
-        return (i, (self.center - self.vertices[i]).get_magnitude())
 
     # Draws the object
     def draw_object(self, enclosed=True):
@@ -168,19 +161,9 @@ class Drawn_Object:
         for i in range(len(collidables)):
             # Loop through all of this object's vertices
             for vertex in self.vertices:
-                # If they are close enough they may be colliding check for collision
-                if self._in_collision_distance(collidables[i], vertex):
-                    if self._run_collision_test(collidables[i]):
-                        return [True, i]
+                if self._run_collision_test(collidables[i]):
+                    return [True, i]
         return [False, None]
-
-    # Check if there is any possibility of collision
-    def _in_collision_distance(self, collidable, vertex):
-
-        # See if the collider vertex is closer to the collidable center than the collidable vertex
-        if (collidable.center - vertex).get_magnitude() <= collidable.vertex_distances[0][1]:
-            return True
-        return False
 
     def _run_collision_test(self, collidable):
 
