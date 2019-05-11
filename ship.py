@@ -174,7 +174,7 @@ class HUD(Drawn_Object):
     def set_score(self):
 
         # Extract the digits of the score
-        score_digits = extract_digits(self.parent.score)
+        score_digits = extract_digits(self.parent.score, [])
         self.score_vertices = []
 
         # Loop through the digits

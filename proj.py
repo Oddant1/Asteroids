@@ -9,12 +9,11 @@ width = window_width() / 2
 height = window_height() / 2
 
 # This returns the digits of the passed number
-def extract_digits(number):
+def extract_digits(number, digits):
 
-    digits = []
-    while number >= 10:
-        digits.append(number % 10)
-        number //= 10
-    digits.append(number)
-    digits.reverse()
-    return digits
+    if number < 10:
+        digits.append(number)
+        digits.reverse()
+        return digits
+    digits.append(number % 10)
+    return extract_digits(number // 10, digits)

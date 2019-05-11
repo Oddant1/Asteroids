@@ -105,8 +105,7 @@ def move_fragments(fragments):
 def move_player(player, asteroids, fragments, hud):
 
     # Move the player
-    if player.velocity.get_magnitude() > 0:
-        player.move_object()
+    player.move_object()
     # If the player isn't respawning check collision
     if not player.respawning:
         # See if bullet collided with an asteroid
