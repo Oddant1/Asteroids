@@ -6,6 +6,7 @@ from vec2 import *
 from mat2 import *
 from drawn_object import *
 
+
 def main():
 
     # Initialize turtle parameters
@@ -13,7 +14,7 @@ def main():
     bgcolor('BLACK')
 
     # Initial asteroid count
-    asteroid_count = 4;
+    asteroid_count = 4
     # Create our player, bullet list, and asteroid list
     player, bullets, asteroids, fragments, hud = initialize(asteroid_count)
 
@@ -26,7 +27,7 @@ def main():
             asteroids = create_asteroids(asteroid_count, player.center)
 
         # Get the time at the start of this frame
-        start_time = clock()
+        start_time = perf_counter()
         # Must clear entire previous frame if using single turtle
         Drawn_Object.drawer.clear()
 
@@ -44,7 +45,7 @@ def main():
         update()
 
         # Keep the frames
-        elapsed_time = clock()
+        elapsed_time = perf_counter()
         if (frame - (elapsed_time - start_time)) > 0:
             sleep(frame - (elapsed_time - start_time))
         else:
@@ -172,4 +173,3 @@ def create_asteroids(asteroid_count, player_center):
 
 
 main()
-win.exitonclick()
